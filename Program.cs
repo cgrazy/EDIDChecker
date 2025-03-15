@@ -65,6 +65,10 @@ namespace EDIDChecker
 
             var size = new Size(1920,1080);
             CheckEdid(edid, size);
+
+            size = new Size(3840,2160);
+            CheckEdid(edid, size);
+
         }
 
         static bool IsValidEDID(string edid)

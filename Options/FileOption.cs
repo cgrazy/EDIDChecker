@@ -17,8 +17,6 @@ namespace EDIDChecker
         {
             base.Run();
 
-            Console.WriteLine($"Run.");   
-
             if(Exists())
             {
                 _EDID = File.ReadAllText(_fileName).Replace(" ","");

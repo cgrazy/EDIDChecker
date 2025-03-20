@@ -27,18 +27,12 @@ namespace EDIDChecker
                 {
                     if (arguments[i].ToUpperInvariant() == FileOption._identifier)
                     {
-
-                        Console.WriteLine("FileOption");
-
                         var optionToAdd = new FileOption(arguments[++i]);
                         optionsToExecute.Add(optionToAdd);
 
                     }
                     else if (arguments[i].ToUpperInvariant() == EdidOption._identifier)
                     {
-
-                        Console.WriteLine("EdidOption");
-
                         var optionToAdd = new EdidOption(arguments[++i]);
                         optionsToExecute.Add(optionToAdd);
                     }

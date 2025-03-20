@@ -4,116 +4,71 @@ using System.Drawing;
 
 namespace EDIDChecker
 {
+
+
     internal class Program
     {
+        static List<Option> optionsToExecute = new List<Option>();
+
         static void Main(string[] args)
         {
+            List<string> arguments = [.. args];
+
             Console.WriteLine("EDID Checker");
 
-            string fileName=string.Empty;
-            string edid=string.Empty;
-            
-            if (args.Length>=1)
+            string edid = string.Empty;
+
+            Width? widthOption = null;
+            Hight? heightOption = null;
+
+            if (arguments.Count >= 1)
             {
-                if(string.Compare(args[0].ToUpperInvariant(),"-F")==0)
+                for (int i = 0; i < arguments.Count; i++)
                 {
-                    if(args.Length!=2)
+                    if (arguments[i].ToUpperInvariant() == FileOption._identifier)
                     {
-                        Console.WriteLine($"No file name specified. Abort!");
-                        return;
+
+                        Console.WriteLine("FileOption");
+
+                        var optionToAdd = new FileOption(arguments[++i]);
+                        optionsToExecute.Add(optionToAdd);
+
                     }
-
-                    fileName = args[1];
-
-                    if(!File.Exists(fileName))
+                    else if (arguments[i].ToUpperInvariant() == EdidOption._identifier)
                     {
-                        Console.WriteLine($"The file '{fileName}' doesn't exists.");
-                        return;
-                    }
-                    else
-                    {
-                        if(!string.IsNullOrEmpty(fileName))
-                        {
-                            edid = File.ReadAllText(fileName).Replace(" ","");
-                        }
-                    }
-                }
 
-                if(string.Compare(args[0].ToUpperInvariant(),"-E")==0)
-                {
-                    if(args.Length!=2)
-                    {
-                        Console.WriteLine($"No edid information specified. Abort!");
-                        return;
-                    }
+                        Console.WriteLine("EdidOption");
 
-                    edid = args[1];
+                        var optionToAdd = new EdidOption(arguments[++i]);
+                        optionsToExecute.Add(optionToAdd);
+                    }
+                    else if (arguments[i].ToUpperInvariant() == Width._identifier)
+                    {
+                        widthOption = new Width(int.Parse(arguments[++i]));
+                    }
+                    else if (arguments[i].ToUpperInvariant() == Hight._identifier)
+                    {
+                        heightOption = new Hight(int.Parse(arguments[++i]));
+                    }
                 }
             }
 
-            if(string.IsNullOrWhiteSpace(edid))
+            Size? size = new Size(1920, 1080); // some default display resolution
+            if (null != heightOption && null != widthOption)
             {
-                Console.WriteLine($"No edid '{edid}' given. Abort!");
-                return;
+                size = new Size(widthOption._width, heightOption._height);
             }
 
-            if(!IsValidEDID(edid))
+            Console.WriteLine($"Options found: {optionsToExecute.Count}");
+
+            optionsToExecute.ForEach(action =>
             {
-                Console.WriteLine($"No valid edid given: '{edid}'. Abort!");
-                return;
-            }
+                action.Run();
+                string value = action.Dump(size.Value);
 
-            var size = new Size(1920,1080);
-            CheckEdid(edid, size);
+                Console.WriteLine(value);
+            });
 
-            size = new Size(3840,2160);
-            CheckEdid(edid, size);
-
-        }
-
-        static bool IsValidEDID(string edid)
-        {
-            bool isValid = false;
-
-            edid=edid.ToUpperInvariant();
-            if(edid.StartsWith("00FFFFFFFFFFFF00"))
-            {
-                isValid = true;
-            }
-
-            return isValid;
-        }
-
-        static void CheckEdid(string edid, Size size)
-        {
-            CheckEdid(edid, size, 1);
-        }
-
-        static void CheckEdid(string edid, Size size, int blockAddressNumber)
-        {
-            Console.WriteLine($"Check edid: '{edid}'");
-            Console.WriteLine("-----------------------");
-        
-            byte[] edidByteArray=DisplayInfoProvider.CreateByteArrayFromString(edid);
-
-            var dip = new DisplayInfoProvider(edidByteArray);
-            
-            var result = dip.GetPhysicalSizeInCM(size, blockAddressNumber);
-
-            var version = dip.GetEDIDVersion();
-            var yom = dip.GetYearOfManufacture();
-            var serialNumber = dip.GetSerialNumber();
-           
-            var screenSizeInCm = dip.GetScreenSizeInCm();
-            Console.WriteLine($"  Version: {version}");
-            Console.WriteLine($"  Serial Number: {serialNumber}");
-            Console.WriteLine($"  Monitor Serial Number: {dip.GetMonitorSerialNumber()}");
-            Console.WriteLine($"  Monitor Name: {dip.GetMonitorName()}");
-            Console.WriteLine($"  Year of manufacture: {yom}");
-            Console.WriteLine($"  ScreenSize: {screenSizeInCm} in cm");
-            Console.WriteLine($"  Calculated physical size: {result} in cm");
-
-            Console.WriteLine($"     dump: {dip.DumpBlockAddressBlock(blockAddressNumber)}");
         }
     }
 }

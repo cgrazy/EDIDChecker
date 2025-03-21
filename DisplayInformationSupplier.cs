@@ -117,6 +117,12 @@ namespace EDIDChecker
             return new SizeF();
         }
 
+        internal bool IsChecksumByteValid(out int modValue)
+        {
+            modValue = _edidBytes[127]%256;
+            return ( modValue == 0);
+        }
+
         internal SizeF GetScreenSizeInCM()
         {
             return new SizeF(Convert.ToInt32(_edidBytes[21]), Convert.ToInt32(_edidBytes[22]));

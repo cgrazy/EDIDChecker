@@ -48,7 +48,9 @@ namespace EDIDChecker
 
             var sb = new StringBuilder();
             
+            int modValue = -1;
             sb.AppendFormat($"Dump for size {size.Width}x{size.Height} in pixel.{Environment.NewLine}");
+            sb.AppendFormat($"Is EDID checksum valid: {_dip.IsChecksumByteValid(out modValue)} (mod 256 = {modValue}){Environment.NewLine}");
 
             var result = _dip.GetPhysicalSizeInCM(size, 1);
 

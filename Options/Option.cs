@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Text;
 
@@ -5,6 +6,12 @@ namespace EDIDChecker
 {
     internal class Option : IOption
     {
+        private Action<string> _outputAction;
+
+        public Action<string>? OutputAction { get => _outputAction; set => _outputAction = value; }
+
+        internal bool _initialized = false;
+
         internal string? _EDID;
 
         internal  DisplayInformationSupplier? _dip;
@@ -29,6 +36,10 @@ namespace EDIDChecker
             }
 
             return isValid;
+        }
+        internal virtual void Initialize()
+        {
+
         }
 
         internal string Dump(Size size)

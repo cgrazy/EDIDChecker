@@ -3,11 +3,11 @@ namespace EDIDChecker
     internal class Width
     {
         internal const string _identifier = "-W";
-        internal int _width;
+        internal int _value;
 
         internal Width(int width)
         {
-            _width=width;
+            _value=width;
         }
     }
 }

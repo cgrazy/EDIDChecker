@@ -13,10 +13,8 @@ namespace EDIDChecker
             _fileName = fileName;   
         }
 
-        internal override void Run()
+        internal override void Initialize()
         {
-            base.Run();
-
             if(Exists())
             {
                 _EDID = File.ReadAllText(_fileName).Replace(" ","");
@@ -25,7 +23,19 @@ namespace EDIDChecker
             }
             else
             {
-                Console.WriteLine($"The file {_fileName} doesn't exists.");                
+                OutputAction?.Invoke($"The file {_fileName} doesn't exists.");                
+            }
+
+            _initialized=true;
+        }
+
+        internal override void Run()
+        {
+            base.Run();
+
+            if(!_initialized)
+            {
+                OutputAction?.Invoke("FileOption not yet initialized.");
             }
         }
 

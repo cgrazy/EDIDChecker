@@ -3,11 +3,11 @@ namespace EDIDChecker
     internal class Hight
     {
         internal const string _identifier = "-H";
-        internal int _height;
+        internal int _value;
 
         internal Hight(int height)
         {
-            _height=height;
+            _value=height;
         }
     }
 }
